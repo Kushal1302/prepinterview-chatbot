@@ -16,7 +16,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.11'
+          python-version: "3.11"
 
       - name: Install Dependencies into package/
         working-directory: ./lambda/predict
@@ -24,16 +24,14 @@ jobs:
           mkdir -p package
           pip install -r requirements.txt -t package
 
-      - name: Copy handler to root
-        working-directory: ./lambda/predict
-        run: |
-          cp lambda_function.py package/
-
       - name: Create deployment package
         working-directory: ./lambda/predict
         run: |
-         cd package
-         zip -r ../lambda_deploy_package.zip .
+          mkdir -p build
+          pip install -r requirements.txt -t build/
+          cp lambda_function.py build/
+          cd build
+          zip -r9 ../lambda_deploy_package.zip .
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v3
@@ -48,5 +46,3 @@ jobs:
          aws lambda update-function-code \
           --function-name predictFunction \
           --zip-file fileb://lambda_deploy_package.zip
-
-

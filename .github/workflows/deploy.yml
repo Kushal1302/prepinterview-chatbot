@@ -17,8 +17,19 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Install Dependencies
-        run: pip install -r requirements.txt
+      - name: Install Dependencies into package/
+        run: |
+          mkdir -p package
+          pip install -r requirements.txt -t package
+
+      - name: Copy handler to root
+        run: |
+          cp lambda_function.py package/
+
+      - name: Create deployment package
+        run: |
+         cd package
+         zip -r ../lambda_deploy_package.zip .
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v3
@@ -26,4 +37,11 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: eu-central-1
+
+      - name: Deploy to AWS Lambda
+        run: |
+         aws lambda update-function-code \
+          --function-name predictFunction \
+          --zip-file fileb://lambda_deploy_package.zip
+
 

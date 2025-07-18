@@ -3,8 +3,6 @@ import joblib
 import pandas as pd
 import boto3
 import tempfile
-from sklearn.metrics.pairwise import cosine_similarity
-from sklearn.feature_extraction.text import TfidfVectorizer
 
 def lambda_handler(event, context):
     question = event["question"]

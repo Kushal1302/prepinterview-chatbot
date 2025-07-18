@@ -22,7 +22,7 @@ jobs:
         working-directory: ./lambda/predict
         run: |
           mkdir -p build
-          pip install --no-cache-dir --no-deps -r requirements.txt -t build/
+          pip install --no-cache-dir -r requirements.txt -t build/
           cp lambda_function.py build/
           cd build
           zip -r9 ../lambda_deploy_package.zip .

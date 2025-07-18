@@ -5,7 +5,8 @@ on:
     branches: [main]
 
 jobs:
-  deploy:
+  deploy--predict-function-to-aws-lambda:
+    name: Deploy Predict Function to AWS Lambda
     runs-on: ubuntu-latest
 
     steps:
@@ -18,15 +19,18 @@ jobs:
           python-version: '3.11'
 
       - name: Install Dependencies into package/
+        working-directory: ./lambda/predict
         run: |
           mkdir -p package
           pip install -r requirements.txt -t package
 
       - name: Copy handler to root
+        working-directory: ./lambda/predict
         run: |
           cp lambda_function.py package/
 
       - name: Create deployment package
+        working-directory: ./lambda/predict
         run: |
          cd package
          zip -r ../lambda_deploy_package.zip .
@@ -39,6 +43,7 @@ jobs:
           aws-region: eu-central-1
 
       - name: Deploy to AWS Lambda
+        working-directory: ./lambda/predict
         run: |
          aws lambda update-function-code \
           --function-name predictFunction \
